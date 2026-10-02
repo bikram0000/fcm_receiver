@@ -1,0 +1,7 @@
+{
+  "senderId": "YOUR_SENDER_ID",
+  "webApiKey": "YOUR_WEB_API_KEY",
+  "projectId": "YOUR_PROJECT_ID",
+  "firebaseAppID": "YOUR_FIREBASE_APP_ID",
+  "vapidKey": "YOUR_VAPID_PUBLIC_KEY"
+}

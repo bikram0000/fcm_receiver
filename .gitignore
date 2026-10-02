@@ -1,0 +1,32 @@
+# Dart / Flutter build output
+.dart_tool/
+build/
+.packages
+
+# Libraries should not include pubspec.lock
+/pubspec.lock
+pubspec.lock
+
+# Editor
+.vscode/
+.idea/
+
+# Local Firebase credentials — never commit.
+# Copy firebase_config.local.json.example, fill it in, and it is picked up
+# automatically at runtime. The shipped firebase_config.dart holds only
+# YOUR_* placeholders.
+firebase_config.local.json
+**/firebase_config.local.json
+
+# Hive storage holds live FCM credentials (keypair, auth secret, tokens)
+*.hive
+*.hive.lock
+testbox.lock
+
+# Captured FCM traffic contains real key material
+tools/real_message_pairs.json
+*firebase-adminsdk*.json
+service-account*.json
+# Local test tooling - the .bat variant embeds a live FCM device token.
+send_push.bat
+example/send_push.bat
