@@ -134,14 +134,14 @@ messages, and native Windows toasts lives in [`example/`](example/).
 
 ### Demo
 
-A short screen recording (35s, 845 KB) of the example app receiving,
-decrypting and displaying a real push notification:
+A short screen recording of the example app receiving, decrypting and
+displaying a real push notification, and raising a native Windows toast:
 
-- [Watch on GitHub](https://github.com/bikram0000/fcm_receiver/blob/main/doc/demo.mp4)
-- [Download the MP4](https://github.com/bikram0000/fcm_receiver/raw/main/doc/demo.mp4)
+![Demo of fcm_receiver](https://raw.githubusercontent.com/bikram0000/fcm_receiver/main/doc/demo.gif)
 
-> GitHub strips `<video>` tags from markdown, so the recording is linked rather
-> than embedded. Opening the first link shows GitHub's built-in video player.
+The original 720p MP4 is also available in
+[`doc/demo.mp4`](https://github.com/bikram0000/fcm_receiver/blob/main/doc/demo.mp4)
+— open it on GitHub to play it in the built-in video player.
 
 ## Limitations
 
@@ -158,5 +158,5 @@ MIT — see [LICENSE](LICENSE).
 
 ## Source
 
-Source code, issue tracker and the demo video live at
+Source code, issue tracker and the demo recording live at
 [github.com/bikram0000/fcm_receiver](https://github.com/bikram0000/fcm_receiver).
