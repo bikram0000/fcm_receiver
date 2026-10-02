@@ -134,19 +134,14 @@ messages, and native Windows toasts lives in [`example/`](example/).
 
 ### Demo
 
-A short screen recording of the example app receiving, decrypting and
-displaying a real push notification:
+A short screen recording (35s, 845 KB) of the example app receiving,
+decrypting and displaying a real push notification:
 
-[![Demo video](https://raw.githubusercontent.com/bikram0000/fcm_receiver/main/doc/demo.mp4)](https://github.com/bikram0000/fcm_receiver/blob/main/doc/demo.mp4)
+- [Watch on GitHub](https://github.com/bikram0000/fcm_receiver/blob/main/doc/demo.mp4)
+- [Download the MP4](https://github.com/bikram0000/fcm_receiver/raw/main/doc/demo.mp4)
 
-<video controls width="640">
-  <source src="https://raw.githubusercontent.com/bikram0000/fcm_receiver/main/doc/demo.mp4" type="video/mp4">
-  Your browser cannot play embedded video —
-  <a href="https://github.com/bikram0000/fcm_receiver/blob/main/doc/demo.mp4">view the demo video on GitHub</a>.
-</video>
-
-Or download it directly:
-[doc/demo.mp4](https://github.com/bikram0000/fcm_receiver/raw/main/doc/demo.mp4)
+> GitHub strips `<video>` tags from markdown, so the recording is linked rather
+> than embedded. Opening the first link shows GitHub's built-in video player.
 
 ## Limitations
 
