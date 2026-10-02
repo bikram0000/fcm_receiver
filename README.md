@@ -15,7 +15,7 @@ most commonly Windows desktop.
 
 ```yaml
 dependencies:
-  fcm_receiver: ^0.0.1
+  fcm_receiver: ^0.0.2
 ```
 
 ```sh

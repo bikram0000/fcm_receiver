@@ -95,7 +95,8 @@ class FirebaseConfig {
         if (decoded is! Map) continue;
         final values = <String, String>{
           for (final entry in decoded.entries)
-            if (entry.key is String && entry.value is String &&
+            if (entry.key is String &&
+                entry.value is String &&
                 (entry.value as String).isNotEmpty)
               entry.key as String: entry.value as String,
         };

@@ -1,8 +1,8 @@
 class ProcessingState {
-  static const int MCS_VERSION_TAG_AND_SIZE = 0;
-  static const int MCS_TAG_AND_SIZE = 1;
-  static const int MCS_SIZE = 2;
-  static const int MCS_PROTO_BYTES = 3;
+  static const int mcsVersionTagAndSize = 0;
+  static const int mcsTagAndSize = 1;
+  static const int mcsSize = 2;
+  static const int mcsProtoBytes = 3;
 }
 
 class MCSProtoTag {

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:fcm_receiver/fcm2.dart';
 import 'package:fcm_receiver/firebase_installation.dart';
@@ -9,6 +8,7 @@ import 'package:fcm_receiver/parser.dart';
 import 'package:fcm_receiver/protos/android_checkin.pb.dart';
 import 'package:fcm_receiver/protos/mcs.pb.dart';
 import 'package:fixnum/fixnum.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
@@ -34,11 +34,11 @@ class MessagingUtility {
 
   HiveStorage hiveStorage = HiveStorage();
 
-  var REGISTER_URL = 'https://android.clients.google.com/c2dm/register3';
-  var CHECKIN_URL = 'https://android.clients.google.com/checkin';
-  final HOST = 'mtalk.google.com';
-  final PORT = 5228;
-  final MAX_RETRY_TIMEOUT = 15;
+  final registerUrl = 'https://android.clients.google.com/c2dm/register3';
+  final checkinUrl = 'https://android.clients.google.com/checkin';
+  final mcsHost = 'mtalk.google.com';
+  final mcsPort = 5228;
+  final maxRetryTimeout = 15;
 
   /// Maximum number of consecutive reconnection attempts before giving up.
   ///
@@ -137,7 +137,7 @@ class MessagingUtility {
     0x6e,
   ];
   late String serverKey;
-  bool initialized =false;
+  bool initialized = false;
   var credentials = {};
 
   var projectId = "";
@@ -146,7 +146,6 @@ class MessagingUtility {
   var webApiKey = "";
   var uuid = '';
   String vapidKey = '';
-
 
   // 04fed190-5c92-409d-b8e5-7f42e4a00b81
   GservicesSetting? root;
@@ -167,7 +166,7 @@ class MessagingUtility {
     required Function(String) onTokenRefresh,
     required Function(dynamic) onNewMessage,
   }) async {
-    initialized=true;
+    initialized = true;
     this.senderId = senderId;
     this.webApiKey = webApiKey;
     this.firebaseAppID = firebaseAppID;
@@ -177,7 +176,7 @@ class MessagingUtility {
     this.onTokenRefresh = onTokenRefresh;
     await hiveStorage.init(storagePath: storagePath, boxName: boxName);
     String? fcmToken = hiveStorage.getBox.get('fcmToken');
-    if (fcmToken != null && fcmToken.isNotEmpty && fcmToken!='null') {
+    if (fcmToken != null && fcmToken.isNotEmpty && fcmToken != 'null') {
       String androidId = hiveStorage.getBox.get('androidId');
       String securityToken = hiveStorage.getBox.get('securityToken');
       // await checkIn(securityToken: securityToken, androidId: androidId);
@@ -231,7 +230,7 @@ class MessagingUtility {
 
   Future<String?> getToken() async {
     String? fcmToken = hiveStorage.getBox.get('fcmToken');
-    if (fcmToken == null || fcmToken.isEmpty|| fcmToken=='null') {
+    if (fcmToken == null || fcmToken.isEmpty || fcmToken == 'null') {
       await register();
       fcmToken = hiveStorage.getBox.get('fcmToken');
       if (onTokenRefresh != null && fcmToken != null) {
@@ -272,7 +271,7 @@ class MessagingUtility {
     return size + 1;
   }
 
-  Future<void> sendData({securityToken, androidId}) async {
+  Future<void> sendData({dynamic securityToken, dynamic androidId}) async {
     // Guard against overlapping connects: a socket error and a liveness
     // timeout can both fire close together.
     if (_connectInFlight) return;
@@ -281,10 +280,10 @@ class MessagingUtility {
     SecureSocket? socket;
     try {
       reactiveConnection.status = ConnectionStatus.connecting;
-      socket = await SecureSocket.connect(HOST, PORT)
-          .timeout(_connectTimeout);
+      socket =
+          await SecureSocket.connect(mcsHost, mcsPort).timeout(_connectTimeout);
     } catch (e) {
-      print('[mcs] connect failed: $e');
+      debugPrint('[mcs] connect failed: $e');
       socket = null;
     } finally {
       _connectInFlight = false;
@@ -328,7 +327,8 @@ class MessagingUtility {
   /// Uses exponential backoff so a server that is briefly unavailable is not
   /// hammered, and gives up (rather than looping forever) once the budget is
   /// exhausted.
-  void _scheduleReconnect(securityToken, androidId, String reason) {
+  void _scheduleReconnect(
+      dynamic securityToken, dynamic androidId, String reason) {
     if (!reconnectAuto) {
       reactiveConnection.status = ConnectionStatus.disconnected;
       return;
@@ -338,7 +338,8 @@ class MessagingUtility {
       return;
     }
     if (_reconnectAttempts >= maxReconnectAttempts) {
-      print('[mcs] giving up after $maxReconnectAttempts attempts ($reason). '
+      debugPrint(
+          '[mcs] giving up after $maxReconnectAttempts attempts ($reason). '
           'Call sendData() again to retry manually.');
       reactiveConnection.status = ConnectionStatus.disconnected;
       return;
@@ -346,7 +347,8 @@ class MessagingUtility {
 
     _reconnectAttempts++;
     final delay = _backoffDelay(_reconnectAttempts);
-    print('[mcs] reconnect attempt $_reconnectAttempts/$maxReconnectAttempts '
+    debugPrint(
+        '[mcs] reconnect attempt $_reconnectAttempts/$maxReconnectAttempts '
         'in ${delay.inSeconds}s ($reason)');
 
     _reconnectTimer = Timer(delay, () {
@@ -381,7 +383,7 @@ class MessagingUtility {
     socket?.destroy();
   }
 
-  void loginWithId(socket, androidId, securityToken) {
+  void loginWithId(dynamic socket, dynamic androidId, dynamic securityToken) {
     var androidId2 = "android-${BigInt.parse(androidId).toRadixString(16)}";
     LoginRequest loginRequest = LoginRequest()
       ..adaptiveHeartbeat = false
@@ -469,7 +471,7 @@ class MessagingUtility {
     // }
   }
 
-  registerGCM(String appId) async {
+  Future<dynamic> registerGCM(String appId) async {
     var options = await checkIn();
     var credentials = await doRegister(
         androidId: options.androidId,
@@ -487,10 +489,11 @@ class MessagingUtility {
     return descriptor;
   }
 
-  Future<AndroidCheckinResponse> checkIn({androidId, securityToken}) async {
+  Future<AndroidCheckinResponse> checkIn(
+      {dynamic androidId, dynamic securityToken}) async {
     await loadProtoFile();
     var buffer = getCheckinRequest(androidId, securityToken);
-    final response = await http.post(Uri.parse(CHECKIN_URL),
+    final response = await http.post(Uri.parse(checkinUrl),
         headers: {'Content-Type': 'application/x-protobuf'}, body: buffer);
     final message = AndroidCheckinResponse.fromBuffer(response.bodyBytes);
     return message;
@@ -544,7 +547,7 @@ class MessagingUtility {
       required Int64 securityToken,
       required body,
       int retry = 0}) async {
-    final response = await http.post(Uri.parse(REGISTER_URL),
+    final response = await http.post(Uri.parse(registerUrl),
         headers: {
           'Authorization':
               'AidLogin ${androidId.toString()}:${securityToken.toString()}',
@@ -565,7 +568,7 @@ class MessagingUtility {
     return response.body;
   }
 
-  onNotificationMessage(Map<String, dynamic> data) async {
+  Future<dynamic> onNotificationMessage(Map<String, dynamic> data) async {
     reactiveConnection.status = ConnectionStatus.connected;
     Map<String, String> keys =
         Map<String, String>.from(jsonDecode(hiveStorage.getBox.get('keys')));
@@ -587,23 +590,23 @@ class MessagingUtility {
       "object": data2,
       "keys": keys,
     });
-    // print("data $dataNeedToSend");
+    // debugPrint("data $dataNeedToSend");
 
     String? message;
 
     // Pure-Dart ECE decoder: in-process, every platform, no native binary.
     try {
-      message = await ece.decryptMessage(dataNeedToSend);
+      message = ece.decryptMessage(dataNeedToSend);
     } catch (e) {
       // Fail loudly instead of silently dropping the notification.
-      print('[decrypt] pure-Dart decoder threw: $e');
+      debugPrint('[decrypt] pure-Dart decoder threw: $e');
       return;
     }
     if (message.isEmpty) {
-      print('[decrypt] FAILED — decoder produced no output.');
+      debugPrint('[decrypt] FAILED — decoder produced no output.');
       return;
     }
-    print('[decrypt] decrypted via dart (ece_aesgcm)');
+    debugPrint('[decrypt] decrypted via dart (ece_aesgcm)');
     if (onNewMessage != null) {
       onNewMessage!(message);
       // await socket.close();

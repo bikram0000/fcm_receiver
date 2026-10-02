@@ -21,16 +21,16 @@ class FirebaseInstallationRequest {
 
   FirebaseInstallationRequest(
       {required this.appId,
-        required this.authVersion,
-        required this.fid,
-        required this.sdkVersion});
+      required this.authVersion,
+      required this.fid,
+      required this.sdkVersion});
 
   Map<String, dynamic> toJson() => {
-    'appId': appId,
-    'authVersion': authVersion,
-    'fid': fid,
-    'sdkVersion': sdkVersion,
-  };
+        'appId': appId,
+        'authVersion': authVersion,
+        'fid': fid,
+        'sdkVersion': sdkVersion,
+      };
 }
 
 // Firebase Installation Response model (camelCase by default)
@@ -57,7 +57,6 @@ class FirebaseInstallationAuthToken {
   }
 }
 
-
 String generateFirebaseFid() {
   List<int> fid = List<int>.filled(17, 0);
   Random.secure().nextInt(256); // Warm-up for secure random number generation
@@ -79,7 +78,9 @@ String generateFirebaseFid() {
 
 // Function to fetch and return the Firebase Installation token
 Future<String> getInstallation(
-    {required String appId, required String projectId, required String apiKey}) async {
+    {required String appId,
+    required String projectId,
+    required String apiKey}) async {
   final request = FirebaseInstallationRequest(
       appId: appId,
       authVersion: "FIS_v2",
@@ -102,9 +103,11 @@ Future<String> getInstallation(
   );
 
   if (response.statusCode != 200) {
-    throw FirebaseError("Failed to fetch installation token: ${response.statusCode}");
+    throw FirebaseError(
+        "Failed to fetch installation token: ${response.statusCode}");
   }
 
-  final responseObject = FirebaseInstallationResponse.fromJson(jsonDecode(response.body));
+  final responseObject =
+      FirebaseInstallationResponse.fromJson(jsonDecode(response.body));
   return responseObject.authToken.token;
 }

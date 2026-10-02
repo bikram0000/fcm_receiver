@@ -37,15 +37,15 @@ void main() {
     });
 
     test('handles a plain string aps alert', () {
-      final result = WindowsNotificationService
-          .parseNotification('{"aps":{"alert":"Wake up"}}');
+      final result = WindowsNotificationService.parseNotification(
+          '{"aps":{"alert":"Wake up"}}');
 
       expect(result.body, 'Wake up');
     });
 
     test('uses a default title when the payload has none', () {
-      final result = WindowsNotificationService
-          .parseNotification('{"data":{"body":"Just a body"}}');
+      final result = WindowsNotificationService.parseNotification(
+          '{"data":{"body":"Just a body"}}');
 
       expect(result.title, 'New push notification');
       expect(result.body, 'Just a body');
@@ -128,14 +128,15 @@ void main() {
 
   group('consumeStartupArguments', () {
     test('detects the toast activation flag case-insensitively', () {
-      final result = WindowsNotificationService
-          .consumeStartupArguments(['C:\\app.exe', '-toastactivated']);
+      final result = WindowsNotificationService.consumeStartupArguments(
+          ['C:\\app.exe', '-toastactivated']);
 
       expect(result, WindowsNotificationService.toastActivatedArg);
     });
 
     test('returns null for a normal launch', () {
-      expect(WindowsNotificationService.consumeStartupArguments(['C:\\app.exe']),
+      expect(
+          WindowsNotificationService.consumeStartupArguments(['C:\\app.exe']),
           isNull);
     });
   });

@@ -33,12 +33,12 @@ class WindowsNotificationService {
   static const String toastActivatedArg = '-ToastActivated';
 
   /// Lowercased [toastActivatedArg], for case-insensitive comparison.
-  static final String _toastActivatedArgLower =
-      toastActivatedArg.toLowerCase();
+  static final String _toastActivatedArgLower = toastActivatedArg.toLowerCase();
 
   /// Stable app user model id. Must not change between runs or Windows will
   /// treat each build as a different app and drop the toast activation.
-  static const String appUserModelId = 'FirebasePushReceiver.FirebasePushReceiver.1';
+  static const String appUserModelId =
+      'FirebasePushReceiver.FirebasePushReceiver.1';
 
   /// Notification activator GUID. Registered by the plugin as a COM class
   /// factory so a toast click can start this app.
@@ -89,7 +89,8 @@ class WindowsNotificationService {
       final launchDetails = await _plugin.getNotificationAppLaunchDetails();
       if (launchDetails?.didNotificationLaunchApp == true) {
         launchedFromToast = true;
-        final toast = parseActivation(launchDetails?.notificationResponse?.payload);
+        final toast =
+            parseActivation(launchDetails?.notificationResponse?.payload);
         if (toast != null) _activations.add(toast);
       }
 
@@ -109,7 +110,8 @@ class WindowsNotificationService {
   static Future<void> _registerColdStartActivator() async {
     try {
       final exePath = Platform.resolvedExecutable;
-      const key = 'HKCU\\Software\\Classes\\CLSID\\{$activatorGuid}\\LocalServer32';
+      const key =
+          'HKCU\\Software\\Classes\\CLSID\\{$activatorGuid}\\LocalServer32';
       final result = await Process.run('reg', [
         'add',
         key,
@@ -121,7 +123,8 @@ class WindowsNotificationService {
         '/f',
       ]);
       if (result.exitCode != 0) {
-        debugPrint('[toast] could not register LocalServer32: ${result.stderr}');
+        debugPrint(
+            '[toast] could not register LocalServer32: ${result.stderr}');
       }
     } catch (error) {
       // Not fatal: warm clicks still work through CoRegisterClassObject.
@@ -161,7 +164,8 @@ class WindowsNotificationService {
         final body = json['body'];
         return ActivatedToast(
           id: json['id'] is int ? json['id'] as int : null,
-          title: title is String && title.isNotEmpty ? title : 'Push notification',
+          title:
+              title is String && title.isNotEmpty ? title : 'Push notification',
           body: body is String ? body : '',
         );
       }
@@ -261,8 +265,7 @@ class WindowsNotificationService {
 
     return ToastNotificationInfo(
       id: trimmed.hashCode & 0x7fffffff,
-      title:
-          (title == null || title.isEmpty) ? 'New push notification' : title,
+      title: (title == null || title.isEmpty) ? 'New push notification' : title,
       body: body,
     );
   }

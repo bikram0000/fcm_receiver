@@ -31,14 +31,15 @@ class FcmRegisterRequestWeb {
   final String endpoint;
   final String p256dh;
 
-  FcmRegisterRequestWeb(this.applicationPubKey, this.auth, this.endpoint, this.p256dh);
+  FcmRegisterRequestWeb(
+      this.applicationPubKey, this.auth, this.endpoint, this.p256dh);
 
   Map<String, dynamic> toJson() => {
-    'application_pub_key': applicationPubKey,
-    'auth': auth,
-    'endpoint': endpoint,
-    'p256dh': p256dh,
-  };
+        'application_pub_key': applicationPubKey,
+        'auth': auth,
+        'endpoint': endpoint,
+        'p256dh': p256dh,
+      };
 }
 
 class FcmRegisterResponse {
@@ -46,7 +47,8 @@ class FcmRegisterResponse {
 
   FcmRegisterResponse(this.token);
 
-  factory FcmRegisterResponse.fromJson(Map<String, dynamic> json) => FcmRegisterResponse(json['token']);
+  factory FcmRegisterResponse.fromJson(Map<String, dynamic> json) =>
+      FcmRegisterResponse(json['token']);
 }
 
 Future<Map<String, dynamic>> registerFcm2({
@@ -68,7 +70,8 @@ Future<Map<String, dynamic>> registerFcm2({
   ));
 
   final client = http.Client();
-  final url = 'https://fcmregistrations.googleapis.com/v1/projects/$projectId/registrations';
+  final url =
+      'https://fcmregistrations.googleapis.com/v1/projects/$projectId/registrations';
   final response = await client.post(Uri.parse(url),
       headers: {
         'x-goog-api-key': apiKey,

@@ -5,17 +5,17 @@ import 'package:convert/convert.dart';
 import 'package:elliptic/elliptic.dart';
 import 'package:http/http.dart' as http;
 
-const String FCM_SUBSCRIBE = 'https://fcm.googleapis.com/fcm/connect/subscribe';
-const String FCM_ENDPOINT = 'https://fcm.googleapis.com/fcm/send';
+const String fcmSubscribe = 'https://fcm.googleapis.com/fcm/connect/subscribe';
+const String fcmEndpoint = 'https://fcm.googleapis.com/fcm/send';
 
 Future<Map<String, dynamic>> registerFCM(
     {required String senderId, required String token}) async {
   final keys = await createKeys();
-  final response = await http.post(Uri.parse(FCM_SUBSCRIBE), headers: {
+  final response = await http.post(Uri.parse(fcmSubscribe), headers: {
     'Content-Type': 'application/x-www-form-urlencoded',
   }, body: {
     'authorized_entity': senderId,
-    'endpoint': '$FCM_ENDPOINT/$token',
+    'endpoint': '$fcmEndpoint/$token',
     'encryption_key': keys['publicKey']!
         .replaceAll('=', '')
         .replaceAll('+', '-')
@@ -30,7 +30,6 @@ Future<Map<String, dynamic>> registerFCM(
     'fcm': jsonDecode(response.body),
   };
 }
-
 
 Future<Map<String, String>> createKeys() async {
   // Generate a new random symmetric key pair
@@ -72,6 +71,6 @@ String escape(String string) {
       .replaceAll(RegExp(r'/'), '_');
 }
 
-String toBase64(input) {
+String toBase64(List<int> input) {
   return escape(base64.encode(input));
 }

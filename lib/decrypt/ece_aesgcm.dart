@@ -27,7 +27,13 @@ import 'package:elliptic/elliptic.dart' show PrivateKey, PublicKey, getP256;
 // `show` keeps pointycastle's PublicKey/PrivateKey from clashing with
 // the elliptic ones above.
 import 'package:pointycastle/export.dart'
-    show AEADParameters, AESEngine, GCMBlockCipher, HMac, KeyParameter, SHA256Digest;
+    show
+        AEADParameters,
+        AESEngine,
+        GCMBlockCipher,
+        HMac,
+        KeyParameter,
+        SHA256Digest;
 
 // Sizes fixed by the ECE spec. The sender always uses AES-128-GCM with
 // a 12-byte nonce and a 16-byte authentication tag.
@@ -134,10 +140,8 @@ Uint8List decryptAesgcm({
   // public key.
   final curve = getP256();
   final privateKey = PrivateKey.fromBytes(curve, receiverPrivateKey);
-  final publicKey =
-      PublicKey.fromHex(curve, hex.encode(senderPublicKey));
-  final sharedSecret =
-      Uint8List.fromList(computeSecret(privateKey, publicKey));
+  final publicKey = PublicKey.fromHex(curve, hex.encode(senderPublicKey));
+  final sharedSecret = Uint8List.fromList(computeSecret(privateKey, publicKey));
 
   // The key-pair encoding goes into the HKDF info strings. In decrypt
   // mode the receiver's public key comes first, the sender's second.
@@ -198,7 +202,7 @@ Uint8List _encodeKeys(Uint8List key1, Uint8List key2) {
 }
 
 /// Builds the HKDF info string:
-/// "Content-Encoding: <encoding>\0P-256\0" followed by the key pair.
+/// `Content-Encoding: <encoding>` followed by a NUL, `P-256`, a NUL, then the key pair.
 Uint8List _generateInfo(String encoding, Uint8List keypair) {
   final prefix = utf8.encode('Content-Encoding: $encoding\u0000P-256\u0000');
   return Uint8List(prefix.length + keypair.length)
@@ -238,8 +242,7 @@ Uint8List _hmacSha256(Uint8List key, Uint8List data) {
   return tag;
 }
 
-Uint8List _aesGcmDecrypt(
-    Uint8List key, Uint8List nonce, Uint8List ciphertext) {
+Uint8List _aesGcmDecrypt(Uint8List key, Uint8List nonce, Uint8List ciphertext) {
   final cipher = GCMBlockCipher(AESEngine());
   cipher.init(
     false,

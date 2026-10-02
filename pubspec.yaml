@@ -3,7 +3,7 @@ description: >-
   Receive Firebase Cloud Messaging pushes from Flutter on any platform by
   speaking the Google MCS protocol, with pure-Dart in-process decryption of
   encrypted payloads. No firebase_messaging, no native binary.
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/bikram0000/fcm_receiver
 repository: https://github.com/bikram0000/fcm_receiver
 issue_tracker: https://github.com/bikram0000/fcm_receiver/issues
@@ -20,16 +20,16 @@ dependencies:
   protobuf: ^3.1.0
   fixnum: ^1.1.0
   http: ^1.2.2
-  elliptic: ^0.3.10
+  elliptic: ^0.4.0
   convert: ^3.1.1
-  pointycastle: ^3.9.1
+  pointycastle: ^4.0.0
   hive: ^2.2.3
   path_provider: ^2.1.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

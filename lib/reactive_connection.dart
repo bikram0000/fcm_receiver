@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 enum ConnectionStatus {
@@ -7,8 +6,10 @@ enum ConnectionStatus {
   connected,
   disconnected,
 }
+
 class ReactiveConnection {
-  final StreamController<ConnectionStatus> _statusController = StreamController<ConnectionStatus>.broadcast();
+  final StreamController<ConnectionStatus> _statusController =
+      StreamController<ConnectionStatus>.broadcast();
 
   Stream<ConnectionStatus> get statusStream => _statusController.stream;
 
@@ -26,5 +27,4 @@ class ReactiveConnection {
   void updateStatus(ConnectionStatus newStatus) {
     status = newStatus;
   }
-
 }

@@ -1,17 +1,16 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:protobuf/protobuf.dart';
 
 import 'constants.dart';
 import 'protos/mcs.pb.dart';
 
-
 class Parser {
   late StreamSubscription _dataSubscription;
   ByteData _data = ByteData(0);
-  int _state = ProcessingState.MCS_VERSION_TAG_AND_SIZE;
+  int _state = ProcessingState.mcsVersionTagAndSize;
   int _sizePacketSoFar = 0;
   int _messageTag = 0;
   int _messageSize = 0;
@@ -57,7 +56,7 @@ class Parser {
   }
 
   void _emitError(dynamic error) {
-    print("on Error socket  :: $error");
+    debugPrint("on Error socket  :: $error");
     destroy();
   }
 
@@ -75,19 +74,19 @@ class Parser {
     var minBytesNeeded = 0;
 
     switch (_state) {
-      case ProcessingState.MCS_VERSION_TAG_AND_SIZE:
+      case ProcessingState.mcsVersionTagAndSize:
         minBytesNeeded = MCSConstants.kVersionPacketLen +
             MCSConstants.kTagPacketLen +
             MCSConstants.kSizePacketLenMin;
         break;
-      case ProcessingState.MCS_TAG_AND_SIZE:
+      case ProcessingState.mcsTagAndSize:
         minBytesNeeded =
             MCSConstants.kTagPacketLen + MCSConstants.kSizePacketLenMin;
         break;
-      case ProcessingState.MCS_SIZE:
+      case ProcessingState.mcsSize:
         minBytesNeeded = _sizePacketSoFar + 1;
         break;
-      case ProcessingState.MCS_PROTO_BYTES:
+      case ProcessingState.mcsProtoBytes:
         minBytesNeeded = _messageSize;
         break;
       default:
@@ -96,25 +95,25 @@ class Parser {
     }
 
     if (_data.lengthInBytes < minBytesNeeded) {
-      //print('Socket read finished prematurely. Waiting for '
+      //debugPrint('Socket read finished prematurely. Waiting for '
       //     '${minBytesNeeded - _data.lengthInBytes} more bytes');
       _isWaitingForData = true;
       return;
     }
 
-    //print('Processing MCS data: state == $_state');
+    //debugPrint('Processing MCS data: state == $_state');
 
     switch (_state) {
-      case ProcessingState.MCS_VERSION_TAG_AND_SIZE:
+      case ProcessingState.mcsVersionTagAndSize:
         _onGotVersion();
         break;
-      case ProcessingState.MCS_TAG_AND_SIZE:
+      case ProcessingState.mcsTagAndSize:
         _onGotMessageTag();
         break;
-      case ProcessingState.MCS_SIZE:
+      case ProcessingState.mcsSize:
         _onGotMessageSize();
         break;
-      case ProcessingState.MCS_PROTO_BYTES:
+      case ProcessingState.mcsProtoBytes:
         _onGotMessageBytes();
         break;
       default:
@@ -142,7 +141,7 @@ class Parser {
     Uint8List dataList = _data.buffer.asUint8List();
     dataList = dataList.sublist(1);
     _data = ByteData.view(dataList.buffer);
-    //print('RECEIVED PROTO OF TYPE ${_data.lengthInBytes}');
+    //debugPrint('RECEIVED PROTO OF TYPE ${_data.lengthInBytes}');
     _onGotMessageSize();
   }
 
@@ -150,7 +149,7 @@ class Parser {
     bool incompleteSizePacket = false;
     Uint8List dataList = _data.buffer.asUint8List();
     CodedBufferReader reader = CodedBufferReader(dataList);
-    //print("Proto 1 size: ${_messageSize}  ${dataList.lengthInBytes}");
+    //debugPrint("Proto 1 size: ${_messageSize}  ${dataList.lengthInBytes}");
 
     try {
       _messageSize = reader.readInt32();
@@ -165,7 +164,7 @@ class Parser {
 
     if (incompleteSizePacket) {
       _sizePacketSoFar = _data.buffer.lengthInBytes - _messageSize;
-      _state = ProcessingState.MCS_SIZE;
+      _state = ProcessingState.mcsSize;
       _waitForData();
       return;
     }
@@ -176,7 +175,7 @@ class Parser {
     _sizePacketSoFar = 0;
 
     if (_messageSize > 0) {
-      _state = ProcessingState.MCS_PROTO_BYTES;
+      _state = ProcessingState.mcsProtoBytes;
       _waitForData();
     } else {
       _onGotMessageBytes();
@@ -193,7 +192,7 @@ class Parser {
 
     if (_data.buffer.lengthInBytes < _messageSize) {
       // Continue reading data.
-      _state = ProcessingState.MCS_PROTO_BYTES;
+      _state = ProcessingState.mcsProtoBytes;
       _waitForData();
       return;
     }
@@ -218,20 +217,20 @@ class Parser {
 
     if (_messageTag == MCSProtoTag.kLoginResponseTag) {
       if (_handshakeComplete) {
-        //print('Unexpected login response');
+        //debugPrint('Unexpected login response');
       } else {
         _handshakeComplete = true;
-        //print('GCM Handshake complete.');
+        //debugPrint('GCM Handshake complete.');
       }
     }
 
     _getNextMessage();
   }
 
-  _getNextMessage() {
+  dynamic _getNextMessage() {
     _messageTag = 0;
     _messageSize = 0;
-    _state = ProcessingState.MCS_TAG_AND_SIZE;
+    _state = ProcessingState.mcsTagAndSize;
     _waitForData();
   }
 

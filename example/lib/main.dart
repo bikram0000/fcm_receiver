@@ -133,10 +133,12 @@ class _MyAppState extends State<MyApp> {
           if (!mounted) return;
           final message = value.toString();
           setState(() {
-            _messages.insert(0, _ReceivedMessage(
-                WindowsNotificationService.parseNotification(message).id,
-                message,
-                DateTime.now()));
+            _messages.insert(
+                0,
+                _ReceivedMessage(
+                    WindowsNotificationService.parseNotification(message).id,
+                    message,
+                    DateTime.now()));
             if (_messages.length > 20) _messages.removeLast();
           });
           unawaited(WindowsNotificationService.showMessage(message));
@@ -176,9 +178,9 @@ class _MyAppState extends State<MyApp> {
               : const Color(0xFFF5B956);
 
   /// Shows a snackbar without touching [context].
-///
-/// Safe to call after an `await`, unlike `ScaffoldMessenger.of(context)`.
-void _notify(String message, {bool isError = false}) {
+  ///
+  /// Safe to call after an `await`, unlike `ScaffoldMessenger.of(context)`.
+  void _notify(String message, {bool isError = false}) {
     _scaffoldMessengerKey.currentState
       ?..hideCurrentSnackBar()
       ..showSnackBar(
@@ -565,9 +567,8 @@ void _notify(String message, {bool isError = false}) {
             runSpacing: 10,
             children: [
               FilledButton.icon(
-                onPressed: _token.isEmpty || _tokenAction != null
-                    ? null
-                    : _copyToken,
+                onPressed:
+                    _token.isEmpty || _tokenAction != null ? null : _copyToken,
                 icon: const Icon(Icons.content_copy_rounded, size: 16),
                 label: const Text('Copy token'),
               ),
